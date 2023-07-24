@@ -15,6 +15,10 @@ class FileVerifier:
         expected_columns = [0, 1]
         return self._verify_structure(expected_columns)
     
+    def verify_hired_employees(self):
+        #Expected columns and positions are: id, name, datetime, department_id, job_id
+        expected_columns = [0, 1, 2, 3, 4]
+        return self._verify_structure(expected_columns)
 
     def _verify_structure(self, expected_columns):
         try:
