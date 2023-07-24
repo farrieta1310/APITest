@@ -1,6 +1,7 @@
 import csv
 from flask import Flask, request, jsonify
 from FileVerifier import FileVerifier
+import re
 
 #Flask constructor
 app = Flask(__name__)
@@ -13,11 +14,20 @@ def upload_file():
   try:
     #read csv file
     file = request.files['file']
-    #reader = csv.reader(file)
+    #get file name to know which structure verify to execture
+    filename = file.filename
+    
     verified_file = FileVerifier(file)
     
-    if verified_file.verify_jobs() == False:
-      return jsonify({"error":"File does not have the correct structure"}),400
+    #Check the file name on the POST request to know which verify needs to be executed
+    if 'jobs' in filename:
+      if verified_file.verify_jobs() == False:
+        return jsonify({"error":"File does not have the correct structure"}),400
+    elif 'departments' in filename:
+      if verified_file.verify_departments() == False:
+        return jsonify({"error":"File does not have the correct structure"}),400
+    else:
+      return jsonify({"error":"Invalid file"}),400
 
     return jsonify({"message":'read file'}),201
   except Exception as e:
