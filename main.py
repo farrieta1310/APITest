@@ -15,7 +15,9 @@ def upload_file():
     file = request.files['file']
     #reader = csv.reader(file)
     verified_file = FileVerifier(file)
-    verified_file.verify_jobs()
+    
+    if verified_file.verify_jobs() == False:
+      return jsonify({"error":"File does not have the correct structure"}),400
 
     return jsonify({"message":'read file'}),201
   except Exception as e:
