@@ -9,7 +9,13 @@ class FileVerifier:
         #Expected columns and positions are: id, job
         expected_columns = [0, 1]
         return self._verify_structure(expected_columns)
+
+    def verify_departments(self):
+        #Expected columns and positions are: id, department
+        expected_columns = [0, 1]
+        return self._verify_structure(expected_columns)
     
+
     def _verify_structure(self, expected_columns):
         try:
             data = pd.read_csv(self.file, header=None)
