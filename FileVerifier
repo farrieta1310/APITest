@@ -1,41 +1,46 @@
-import csv
-from flask import Flask, request, jsonify
-from FileVerifier import FileVerifier
-import re
+import pandas as pd
+from datetime import datetime
+import numpy as np
 
-#Flask constructor
-app = Flask(__name__)
-
-#The route that the application should call the associated function
-@app.route('/upload', methods=['POST'])
-
-#Function to Upload File through API
-def upload_file():
-  try:
-    #read csv file
-    file = request.files['file']
-    #get file name to know which structure verify to execture
-    filename = file.filename
+class FileVerifier:
+    def __init__(self, file):
+        self.file = file
     
-    verified_file = FileVerifier(file)
+    def verify_jobs(self):
+        #Expected columns and positions are: id, job
+        expected_columns = [0, 1]
+        #Expected data types: int, str
+        expected_data_types = {0: np.int64, 1: object}        
+        return self._verify_structure(expected_columns,expected_data_types)
+
+    def verify_departments(self):
+        #Expected columns and positions are: id, department
+        expected_columns = [0, 1]
+        #Expected data types: int, str
+        expected_data_types = {0: np.int64, 1: object}            
+        return self._verify_structure(expected_columns,expected_data_types)
     
-    #Check the file name on the POST request to know which verify needs to be executed
-    if 'jobs' in filename:
-      if verified_file.verify_jobs() == False:
-        return jsonify({"error":"File does not have the correct structure"}),400
-    elif 'departments' in filename:
-      if verified_file.verify_departments() == False:
-        return jsonify({"error":"File does not have the correct structure"}),400
-    elif 'employees' in filename:
-      if verified_file.verify_hired_employees() == False:
-        return jsonify({"error":"File does not have the correct structure"}),400      
-    else:
-      #In this case the file is not loaded as we can't tell the kind of file it's
-      return jsonify({"error":"Invalid file"}),400
+    def verify_hired_employees(self):
+        #Expected columns and positions are: id, name, datetime, department_id, job_id
+        expected_columns = [0, 1, 2, 3, 4]
+        return self._verify_structure(expected_columns)
 
-    return jsonify({"message":'read file'}),201
-  except Exception as e:
-    return jsonify({"error":str(e)}),500
+    def _verify_structure(self, expected_columns, expected_data_types):
+        try:
+            data = pd.read_csv(self.file, header=None)
+            columns = data.columns.tolist()
 
-if __name__ == '__main__':
-  app.run(debug=True)
+            #Check that the file has the correct number of columns
+            if len(columns) != len(expected_columns):
+                return False
+            
+            #Check columns data types
+            for col, data_type in expected_data_types.items():
+                if data.dtypes[col] != data_type:
+                    return False
+            
+            return True
+
+        except Exception as e:
+            print(f'File does not have the correct structure: {e}')
+            return False
