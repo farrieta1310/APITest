@@ -26,7 +26,11 @@ def upload_file():
     elif 'departments' in filename:
       if verified_file.verify_departments() == False:
         return jsonify({"error":"File does not have the correct structure"}),400
+    elif 'employees' in filename:
+      if verified_file.verify_hired_employees() == False:
+        return jsonify({"error":"File does not have the correct structure"}),400      
     else:
+      #In this case the file is not loaded as we can't tell the kind of file it's
       return jsonify({"error":"Invalid file"}),400
 
     return jsonify({"message":'read file'}),201
