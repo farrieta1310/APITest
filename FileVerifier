@@ -23,7 +23,9 @@ class FileVerifier:
     def verify_hired_employees(self):
         #Expected columns and positions are: id, name, datetime, department_id, job_id
         expected_columns = [0, 1, 2, 3, 4]
-        return self._verify_structure(expected_columns)
+        #Expected data types: int, str, datetime, int, int
+        expected_data_types = {0: np.int64, 1: object, 2: object, 3: np.float64, 4: np.float64}           
+        return self._verify_structure(expected_columns,expected_data_types)
 
     def _verify_structure(self, expected_columns, expected_data_types):
         try:
