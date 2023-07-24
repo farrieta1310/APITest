@@ -1,5 +1,6 @@
 import csv
 from flask import Flask, request, jsonify
+import pandas as pd
 
 #Flask constructor
 app = Flask(__name__)
@@ -12,7 +13,9 @@ def upload_file():
   try:
     #read csv file
     file = request.files['file']
-    reader = csv.reader(file)
+    #reader = csv.reader(file)
+    df = pd.read_csv(file)
+    print(df)
     return jsonify({"message":'read file'}),201
   except Exception as e:
     return jsonify({"error":str(e)}),500
