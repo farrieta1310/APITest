@@ -1,17 +1,18 @@
 import pyodbc
+from GoogleSecretManager import GoogleSecretsManager
 
 class SQLDB:
-    def __init__(self, db_name, user, password, host, port=1433):
-        self.db_name = db_name
-        self.user = user
-        self.password = password
-        self.host = host
-        self.port = port
+    def __init__(self):
+        self.__db_name = GoogleSecretsManager('1000257097927').get_secret_value('db_name')
+        self.__user = GoogleSecretsManager('1000257097927').get_secret_value('db_user')
+        self.__password = GoogleSecretsManager('1000257097927').get_secret_value('db_password')
+        self.__host = GoogleSecretsManager('1000257097927').get_secret_value('db_host')
+        self.__port = GoogleSecretsManager('1000257097927').get_secret_value('db_port')
         self.connection = None
 
     def connect(self):
         try:
-            connection_string = f"DRIVER=ODBC Driver 17 for SQL Server;SERVER={self.host},{self.port};DATABASE={self.db_name};UID={self.user};PWD={self.password}"
+            connection_string = f"DRIVER=ODBC Driver 17 for SQL Server;SERVER={self.__host},{self.__port};DATABASE={self.__db_name};UID={self.__user};PWD={self.__password}"
             self.connection = pyodbc.connect(connection_string)
             print("Connected to the database.")
         except pyodbc.Error as e:
