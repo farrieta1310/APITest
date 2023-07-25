@@ -3,6 +3,7 @@ from flask import Flask, request, jsonify
 from FileVerifier import FileVerifier
 from SQLDB import SQLDB
 import re
+import pandas as pd
 
 #Flask constructor
 app = Flask(__name__)
@@ -51,7 +52,21 @@ def upload_file():
 
     elif 'employees' in filename:
       if verified_file.verify_hired_employees() == False:
-        return jsonify({"error":"File does not have the correct structure"}),400      
+        return jsonify({"error":"File does not have the correct structure"}),400  
+
+      data = verified_file.get_df()
+
+      for index,row in data.iterrows():
+        id = row[0] if not pd.isna(row[0]) else None
+        name = row[1] if not pd.isna(row[1]) else None
+        hire_date = row[2] if not pd.isna(row[2]) else None
+        department_id = row[3] if not pd.isna(row[3]) else None
+        job_id = row[4] if not pd.isna(row[4]) else None
+        db_sql = SQLDB()
+        db_sql.connect()        
+        db_sql.execute_query(f"EXEC dbo.ADD_HIRED_EMPLOYEES @id={id},@name='{name}',@hire_date='{hire_date}',@department_id='{department_id}',@job_id='{job_id}'") 
+        db_sql.disconnect()     
+
     else:
       #In this case the file is not loaded as we can't tell the kind of file it's
       return jsonify({"error":"Invalid file"}),400
