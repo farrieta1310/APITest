@@ -38,6 +38,17 @@ def upload_file():
     elif 'departments' in filename:
       if verified_file.verify_departments() == False:
         return jsonify({"error":"File does not have the correct structure"}),400
+      
+      data = verified_file.get_df()
+
+      for index,row in data.iterrows():
+        department_id = row[0]
+        department = row[1]
+        db_sql = SQLDB()
+        db_sql.connect()        
+        db_sql.execute_query(f"EXEC dbo.ADD_DEPARTMENTS @department_id ={department_id},@department='{department}'") 
+        db_sql.disconnect()        
+
     elif 'employees' in filename:
       if verified_file.verify_hired_employees() == False:
         return jsonify({"error":"File does not have the correct structure"}),400      
