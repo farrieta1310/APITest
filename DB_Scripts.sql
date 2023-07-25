@@ -136,3 +136,58 @@ CREATE TABLE JOBS
 JOBS_ID INT,
 DEPARTMENT_NAME VARCHAR(150)
 );
+
+CREATE PROCEDURE dbo.ADD_JOBS(@job_id int, @department varchar(150))
+AS
+BEGIN
+	SET NOCOUNT ON;
+	BEGIN TRY
+		--Attempt to insert into the jobs table
+		INSERT INTO dbo.JOBS([JOBS_ID],[DEPARTMENT_NAME])
+		VALUES(@job_id, @department);
+
+		SELECT 'Success' AS RESULT;
+	END TRY
+	BEGIN CATCH
+		SELECT ERROR_NUMBER() AS ErrorNumber, ERROR_MESSAGE() AS ErrorMessage
+	END CATCH
+END;
+
+CREATE PROCEDURE dbo.ADD_DEPARTMENTS(@department_id int, @department varchar(150))
+AS
+BEGIN
+	SET NOCOUNT ON;
+	BEGIN TRY
+		--Attempt to insert into the department table
+		INSERT INTO dbo.DEPARTMENTS([DEPARTMENT_ID],[DEPARTMENT_NAME])
+		VALUES(@department_id, @department);
+
+		SELECT 'Success' AS RESULT;
+	END TRY
+	BEGIN CATCH
+		SELECT ERROR_NUMBER() AS ErrorNumber, ERROR_MESSAGE() AS ErrorMessage
+	END CATCH
+END;
+
+CREATE PROCEDURE dbo.ADD_HIRED_EMPLOYEES(@id int, @name varchar(100), @hire_date datetime, @department_id varchar(10), @job_id varchar(10))
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	DECLARE @fixed_dept INT,
+	        @fixed_job INT
+
+	BEGIN TRY
+		SET @fixed_dept = (SELECT CAST(CAST(CASE WHEN @department_id = 'NaN' THEN NULL ELSE @department_id END AS FLOAT)AS INT));
+		SET @fixed_job = (SELECT CAST(CAST(CASE WHEN @job_id = 'NaN' THEN NULL ELSE @job_id END AS FLOAT)AS INT))
+
+		--Attempt to insert into the hired employees table
+		INSERT INTO dbo.HIRED_EMPLOYEES([ID],[NAME], [HIRE_DATE], [DEPARTMENT_ID], [JOBS_ID])
+		VALUES(@id, @name, @hire_date, @fixed_dept, @fixed_job);
+
+		SELECT 'Success' AS RESULT;
+	END TRY
+	BEGIN CATCH
+		SELECT ERROR_NUMBER() AS ErrorNumber, ERROR_MESSAGE() AS ErrorMessage
+	END CATCH
+END;
