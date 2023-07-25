@@ -1,6 +1,7 @@
 import csv
 from flask import Flask, request, jsonify
 from FileVerifier import FileVerifier
+from SQLDB import SQLDB
 import re
 
 #Flask constructor
@@ -23,6 +24,17 @@ def upload_file():
     if 'jobs' in filename:
       if verified_file.verify_jobs() == False:
         return jsonify({"error":"File does not have the correct structure"}),400
+      
+      data = verified_file.get_df()
+
+      for index,row in data.iterrows():
+        job = row[0]
+        department = row[1]
+        db_sql = SQLDB()
+        db_sql.connect()        
+        db_sql.execute_query(f"EXEC dbo.ADD_JOBS @job_id ={job},@department='{department}'") 
+        db_sql.disconnect()     
+
     elif 'departments' in filename:
       if verified_file.verify_departments() == False:
         return jsonify({"error":"File does not have the correct structure"}),400
