@@ -25,14 +25,12 @@ class SQLDB:
 
     def execute_query(self, query):
         try:
-            if self.connection is None:
-                self.connect()
-
             cursor = self.connection.cursor()
+            print(f'Query executed: {query}')
             cursor.execute(query)
-            result = cursor.fetchall()
+            cursor.commit()
             cursor.close()
-            return result
+            return 'Query executed succesfully'
         except pyodbc.Error as e:
             print(f"Error executing the query: {e}")
             return None
