@@ -5,6 +5,7 @@ import numpy as np
 class FileVerifier:
     def __init__(self, file):
         self.file = file
+        self.__df = pd.DataFrame()
     
     def verify_jobs(self):
         #Expected columns and positions are: id, job
@@ -41,8 +42,13 @@ class FileVerifier:
                 if data.dtypes[col] != data_type:
                     return False
             
+            self.__df = data
+            #print(self.__df)
             return True
 
         except Exception as e:
             print(f'File does not have the correct structure: {e}')
             return False
+    
+    def get_df(self):
+        return self.__df
