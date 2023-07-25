@@ -1,6 +1,7 @@
 from google.cloud import secretmanager
 import os
 
+#Setting enviroment variables to be able to authenticate to GCP
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "C:/Users/ferna/Desktop/PruebaData/Credentials/massive-woods-393817-a54a8a2313e4.json"
 
 class GoogleSecretsManager:
