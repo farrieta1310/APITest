@@ -1,0 +1,26 @@
+{
+  "type": "record",
+  "name": "Hired_Employees",
+  "fields": [
+    {
+      "name": "Id",
+      "type": "int"
+    },
+    {
+      "name": "Name",
+      "type": "string"
+    },
+    {
+      "name": "Hire_Date",
+      "type": "string"
+    },
+    {
+      "name": "Department_id",
+      "type": "int"
+    },
+    {
+      "name": "Jobs_id",
+      "type": "int"
+    }
+  ]
+}

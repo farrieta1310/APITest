@@ -1,0 +1,14 @@
+{
+  "type": "record",
+  "name": "Department",
+  "fields": [
+    {
+      "name": "Department_id",
+      "type": "int"
+    },
+    {
+      "name": "Department_Name",
+      "type": "string"
+    }
+  ]
+}
