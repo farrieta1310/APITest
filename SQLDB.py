@@ -1,9 +1,8 @@
 import pyodbc
 from GoogleSecretManager import GoogleSecretsManager
 import avro.schema
-from avro.datafile import DataFileWriter
-from avro.io import DatumWriter
-import json
+from avro.datafile import DataFileWriter, DataFileReader
+from avro.io import DatumWriter, DatumReader
 
 class SQLDB:
     def __init__(self):
@@ -60,10 +59,21 @@ class SQLDB:
         except pyodbc.Error as e:
             print(f"Error exporting table: {e}")
             return None        
-        
+
+    def insert_from_avro(self, avro_file):
+        # Read data from the Avro file and insert into the database
+        with open(avro_file, 'rb') as avro_file:
+            reader = DataFileReader(avro_file, DatumReader())
+            for record in reader:
+                department_id = record["Department_id"]
+                department_name = record["Department_Name"]
+                self.execute_query(f"EXEC dbo.ADD_DEPARTMENTS @department_id ={department_id},@department='{department_name}'") 
+            reader.close()
+
 # Example Export:
 if __name__ == "__main__":
     db_sql = SQLDB()
     db_sql.connect()
-    db_sql.export_table_to_avro(table_name='DEPARTMENTS', avro_format='avro_department_format.avsc' ,output_file='department_output.avro')        
+    #db_sql.export_table_to_avro(table_name='DEPARTMENTS', avro_format='avro_department_format.avsc' ,output_file='department_output.avro')        
+    db_sql.insert_from_avro(avro_file='department_output.avro')
     db_sql.disconnect()
