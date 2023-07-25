@@ -1,2 +1,6 @@
 flask
 pandas
+numpy
+google.cloud
+GoogleSecretManager
+pyodbc
