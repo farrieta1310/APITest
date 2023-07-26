@@ -20,7 +20,9 @@ This API is connected to SQL Server DB hosted in GCP. The user, password, Databa
 
 Examples of how to call the API for each file:
 curl -X POST -F "file=@C:\Users\ferna\Desktop\PruebaData\jobs.csv"   http://127.0.0.1:5000/upload
+
 curl -X POST -F "file=@C:\Users\ferna\Desktop\PruebaData\departments.csv"   http://127.0.0.1:5000/upload
+
 curl -X POST -F "file=@C:\Users\ferna\Desktop\PruebaData\hired_employees.csv"   http://127.0.0.1:5000/upload
 
 The class called: SQLDB handles the operations related to Database. Apart from the connect, disconnect and execute operations, this calls also provides support to backup the tables into an AVRO file, and also restore the tables using those same AVRO files.
