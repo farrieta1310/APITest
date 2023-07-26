@@ -30,10 +30,10 @@ def upload_file():
 
       for index,row in data.iterrows():
         job = row[0]
-        department = row[1]
+        name = row[1]
         db_sql = SQLDB()
         db_sql.connect()        
-        db_sql.execute_query(f"EXEC dbo.ADD_JOBS @job_id ={job},@department='{department}'") 
+        db_sql.execute_query(f"EXEC dbo.ADD_JOBS @job_id ={job},@job_name='{name}'") 
         db_sql.disconnect()     
 
     elif 'departments' in filename:
