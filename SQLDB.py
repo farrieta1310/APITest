@@ -75,7 +75,7 @@ class SQLDB:
                 writer = DataFileWriter(avro_file, DatumWriter(), avro_schema)
                 for row in table_data:
                     department_id, department_name = row
-                    writer.append({"Jobs_Id": department_id, "Department_Name": department_name})
+                    writer.append({"Jobs_Id": department_id, "Job_Name": department_name})
                 writer.close()
 
             return 'Table exported succesfully'
@@ -122,7 +122,7 @@ class SQLDB:
             for record in reader:
                 job_id = record["Jobs_Id"]
                 department_name = record["Department_Name"]
-                self.execute_query(f"EXEC dbo.ADD_JOBS @job_id ={job_id},@department='{department_name}'") 
+                self.execute_query(f"EXEC dbo.ADD_JOBS @job_id ={job_id},@job_name='{department_name}'") 
             reader.close()            
 
     def insert_employees_from_avro(self, avro_file):
@@ -137,3 +137,15 @@ class SQLDB:
                 job_id = record["Jobs_id"]                                                
                 self.execute_query(f"EXEC dbo.ADD_HIRED_EMPLOYEES @id={id},@name='{name}',@hire_date='{hire_date}',@department_id='{department_id}',@job_id='{job_id}'") 
             reader.close()  
+
+# Example Export/Import:
+#if __name__ == "__main__":
+#    db_sql = SQLDB()
+#    db_sql.connect()
+#    db_sql.export_department_table_to_avro(table_name='DEPARTMENTS', avro_format='avro_department_format.avsc' ,output_file='department_output.avro')        
+#    db_sql.insert_department_from_avro(avro_file='department_output.avro')
+#    db_sql.export_jobs_table_to_avro(table_name='JOBS', avro_format='avro_jobs_format.avsc' ,output_file='jobs_output.avro')
+#    db_sql.insert_job_from_avro(avro_file='jobs_output.avro')
+#    db_sql.export_hired_employees_table_to_avro(table_name='HIRED_EMPLOYEES', avro_format='avro_hired_employees_format.avsc' ,output_file='employees_output.avro')
+#    db_sql.insert_employees_from_avro(avro_file='employees_output.avro')    
+#    db_sql.disconnect()
